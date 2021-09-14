@@ -5,18 +5,22 @@ import {IUser} from "../models/IUser";
 import {IEvent} from "../models/IEvent";
 import {Moment} from "moment";
 import {formatDate} from "../utils/date";
+import {useTypedSelector} from "../hooks/useTypedSelector";
 
 interface EventFormProps {
   guests: IUser[]
+  submit: (event: IEvent) => void
 }
 
-const EventForm: FC<EventFormProps> = ({guests}) => {
+const EventForm: FC<EventFormProps> = ({guests, submit}) => {
   const [event, setEvent] = useState<IEvent>({
     author: '',
     date: '',
     guest: '',
     description: ''
   } as IEvent)
+
+  const {user} = useTypedSelector(state => state.auth)
 
   const selectDate = (date: Moment | null) => {
     if (date) {
@@ -25,8 +29,7 @@ const EventForm: FC<EventFormProps> = ({guests}) => {
   }
 
   const submitForm = () => {
-    // setEvent({...event, author: })
-    console.log(event)
+    submit({...event, author: user.username})
   }
 
   return (
@@ -45,7 +48,7 @@ const EventForm: FC<EventFormProps> = ({guests}) => {
       <Form.Item
         label="Event date"
         name="date"
-        rules={[rules.required()]}
+        rules={[rules.required(), rules.isDateAfter("Can`t create event on a past date")]}
       >
         <DatePicker onChange={(date) => selectDate(date)}/>
       </Form.Item>

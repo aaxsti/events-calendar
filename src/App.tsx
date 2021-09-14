@@ -17,7 +17,6 @@ const App: FC = () => {
     }
   }, [setUser, setIsAuth]);
 
-
   return (
     <Layout>
       <Navbar/>
